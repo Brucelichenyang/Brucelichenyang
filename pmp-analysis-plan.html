@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMP考试数据分析方案</title>
+  <style>
+    /* ===== 全局重置与字体 ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Helvetica Neue", Arial, sans-serif;
+      background: #f5f7fa;
+      color: #2c3e50;
+      line-height: 1.7;
+    }
+
+    /* ===== 颜色变量模拟 ===== */
+    /* primary:#1a3a5c  blue:#2980b9  green:#27ae60  orange:#f39c12  red:#e74c3c */
+
+    /* ===== 封面 ===== */
+    .cover {
+      background: linear-gradient(135deg, #1a3a5c 0%, #2980b9 60%, #27ae60 100%);
+      color: #fff;
+      padding: 80px 40px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: "";
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .cover::after {
+      content: "";
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .cover-logo {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+    .cover h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+    .cover-sub {
+      font-size: 1.15rem;
+      opacity: 0.88;
+      margin-bottom: 32px;
+    }
+    .cover-meta {
+      display: inline-flex;
+      gap: 32px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 14px 32px;
+      font-size: 0.9rem;
+    }
+    .cover-meta span { opacity: 0.85; }
+    .cover-meta strong { opacity: 1; display: block; font-size: 1rem; }
+
+    /* ===== 主体容器 ===== */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ===== 通用卡片 ===== */
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 18px rgba(26,58,92,0.09);
+      padding: 36px 40px;
+      margin-bottom: 36px;
+    }
+
+    /* ===== 节标题 ===== */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .section-num {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: #1a3a5c;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .section-num.blue  { background: #2980b9; }
+    .section-num.green { background: #27ae60; }
+    .section-num.orange{ background: #f39c12; }
+    .section-num.red   { background: #e74c3c; }
+    .section-num.teal  { background: #16a085; }
+    .section-num.purple{ background: #8e44ad; }
+
+    .section-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #1a3a5c;
+    }
+    .section-title small {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: #7f8c8d;
+      margin-top: 2px;
+    }
+
+    /* ===== 逻辑框架 ===== */
+    .logic-flow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .logic-step {
+      flex: 1;
+      min-width: 180px;
+      background: #f0f6ff;
+      border-left: 4px solid #2980b9;
+      padding: 20px 22px;
+      position: relative;
+    }
+    .logic-step:nth-child(2) { border-color: #27ae60; background: #f0fdf5; }
+    .logic-step:nth-child(3) { border-color: #f39c12; background: #fffbf0; }
+    .logic-step:nth-child(4) { border-color: #e74c3c; background: #fff5f5; }
+    .logic-step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+    .logic-step p  { font-size: 0.88rem; color: #555; }
+    .logic-arrow {
+      display: flex; align-items: center;
+      font-size: 1.6rem; color: #bdc3c7; padding: 0 6px;
+    }
+
+    /* ===== 表格 ===== */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    .data-table thead tr {
+      background: #1a3a5c;
+      color: #fff;
+    }
+    .data-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .data-table td { padding: 11px 16px; }
+    .data-table tbody tr:nth-child(odd)  { background: #f8fafd; }
+    .data-table tbody tr:nth-child(even) { background: #fff; }
+    .data-table tbody tr:hover { background: #e8f4fd; transition: background .18s; }
+
+    /* ===== 子节标题 ===== */
+    .sub-title {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: #2980b9;
+      margin: 24px 0 12px;
+      padding-left: 10px;
+      border-left: 3px solid #2980b9;
+    }
+
+    /* ===== 指标徽章 ===== */
+    .badge {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .badge-A { background: #1e8449; color: #fff; }
+    .badge-T { background: #27ae60; color: #fff; }
+    .badge-B { background: #f39c12; color: #fff; }
+    .badge-N { background: #e74c3c; color: #fff; }
+
+    /* ===== ATBN说明条 ===== */
+    .atbn-bar {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      margin: 16px 0;
+    }
+    .atbn-item {
+      display: flex; align-items: center; gap: 8px;
+      background: #f8fafd;
+      border-radius: 8px;
+      padding: 10px 18px;
+      flex: 1; min-width: 200px;
+    }
+    .atbn-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .atbn-item h4 { font-size: 0.92rem; font-weight: 700; margin-bottom: 2px; }
+    .atbn-item p  { font-size: 0.8rem; color: #666; }
+
+    /* ===== 四象限 ===== */
+    .quadrant-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 3px;
+      background: #dfe6e9;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 16px 0;
+      min-height: 260px;
+    }
+    .quadrant {
+      padding: 22px 20px;
+      display: flex; flex-direction: column;
+      gap: 8px;
+    }
+    .q-tl { background: #ffeaa7; }
+    .q-tr { background: #d4efdf; }
+    .q-bl { background: #fdecea; }
+    .q-br { background: #d6eaf8; }
+    .q-label { font-weight: 700; font-size: 0.95rem; }
+    .q-desc  { font-size: 0.82rem; color: #555; }
+    .quadrant-axis {
+      display: flex; align-items: center; justify-content: center;
+      gap: 24px;
+      font-size: 0.82rem;
+      color: #7f8c8d;
+      margin-top: 6px;
+    }
+    .axis-row {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+
+    /* ===== 回归模型盒子 ===== */
+    .model-box {
+      display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+      margin: 16px 0;
+    }
+    .model-block {
+      flex: 1; min-width: 180px;
+      border-radius: 10px;
+      padding: 20px 22px;
+      text-align: center;
+    }
+    .model-block h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
+    .model-block ul { list-style: none; font-size: 0.82rem; color: rgba(255,255,255,0.9); }
+    .model-block ul li::before { content: "• "; }
+    .model-in  { background: #2980b9; border-radius: 10px 0 0 10px; }
+    .model-mid { background: #1a3a5c; }
+    .model-out { background: #27ae60; border-radius: 0 10px 10px 0; }
+    .model-arrow-v {
+      font-size: 1.8rem; color: #bdc3c7;
+      display: flex; align-items: center; padding: 0 6px;
+    }
+
+    /* ===== 人才分层卡片 ===== */
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .tier-card {
+      border-radius: 12px;
+      padding: 22px 18px;
+      text-align: center;
+    }
+    .tier-s { background: linear-gradient(135deg, #1e8449, #27ae60); color: #fff; }
+    .tier-a { background: linear-gradient(135deg, #1a6fa0, #2980b9); color: #fff; }
+    .tier-b { background: linear-gradient(135deg, #d35400, #f39c12); color: #fff; }
+    .tier-c { background: linear-gradient(135deg, #922b21, #e74c3c); color: #fff; }
+    .tier-card .tier-rank {
+      font-size: 2rem; font-weight: 900;
+      margin-bottom: 6px;
+    }
+    .tier-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; opacity: 0.95; }
+    .tier-card p  { font-size: 0.78rem; opacity: 0.88; }
+
+    /* ===== 故事线时间轴 ===== */
+    .storyline {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      flex-wrap: wrap;
+      margin: 16px 0;
+      position: relative;
+    }
+    .story-step {
+      flex: 1; min-width: 130px;
+      text-align: center;
+      position: relative;
+    }
+    .story-step::after {
+      content: "→";
+      position: absolute;
+      right: -14px; top: 18px;
+      font-size: 1.4rem;
+      color: #bdc3c7;
+      z-index: 1;
+    }
+    .story-step:last-child::after { display: none; }
+    .story-icon {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      background: #1a3a5c;
+      color: #fff;
+      font-size: 1.5rem;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 8px;
+      box-shadow: 0 3px 10px rgba(26,58,92,0.2);
+    }
+    .story-step:nth-child(1) .story-icon { background: #2980b9; }
+    .story-step:nth-child(2) .story-icon { background: #27ae60; }
+    .story-step:nth-child(3) .story-icon { background: #16a085; }
+    .story-step:nth-child(4) .story-icon { background: #f39c12; }
+    .story-step:nth-child(5) .story-icon { background: #8e44ad; }
+    .story-step:nth-child(6) .story-icon { background: #e74c3c; }
+    .story-step:nth-child(7) .story-icon { background: #1a3a5c; }
+    .story-ch { font-size: 0.72rem; color: #2980b9; font-weight: 700; margin-bottom: 2px; }
+    .story-title { font-size: 0.83rem; font-weight: 700; color: #1a3a5c; margin-bottom: 2px; }
+    .story-desc  { font-size: 0.76rem; color: #7f8c8d; }
+
+    /* ===== Checklist ===== */
+    .checklist { list-style: none; margin: 8px 0; }
+    .checklist li {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      background: #f8fafd;
+      border: 1px solid #e3eaf3;
+      font-size: 0.92rem;
+    }
+    .checklist li:hover { background: #eaf4fd; border-color: #2980b9; transition: all .18s; }
+    .chk-box {
+      width: 22px; height: 22px;
+      border-radius: 5px;
+      border: 2px solid #2980b9;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .chk-text strong { display: block; color: #1a3a5c; font-weight: 700; margin-bottom: 3px; }
+    .chk-text span   { color: #666; font-size: 0.85rem; }
+
+    /* ===== 标签 ===== */
+    .tag {
+      display: inline-block;
+      border-radius: 5px;
+      padding: 2px 9px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+    .tag-blue   { background: #d6eaf8; color: #1a6fa0; }
+    .tag-green  { background: #d4efdf; color: #1e8449; }
+    .tag-orange { background: #fef9e7; color: #b7770d; border: 1px solid #f39c12; }
+    .tag-red    { background: #fdecea; color: #922b21; }
+
+    /* ===== 信息栏 ===== */
+    .info-row {
+      display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0;
+    }
+    .info-item {
+      flex: 1; min-width: 160px;
+      background: #f0f6ff;
+      border-radius: 10px;
+      padding: 18px 20px;
+      border-top: 4px solid #2980b9;
+      text-align: center;
+    }
+    .info-item:nth-child(2) { border-color: #27ae60; background: #f0fdf5; }
+    .info-item:nth-child(3) { border-color: #f39c12; background: #fffbf0; }
+    .info-item:nth-child(4) { border-color: #e74c3c; background: #fff5f5; }
+    .info-item .num { font-size: 1.7rem; font-weight: 800; color: #1a3a5c; }
+    .info-item .lbl { font-size: 0.82rem; color: #666; margin-top: 4px; }
+
+    /* ===== 分隔线 ===== */
+    hr.divider {
+      border: none;
+      border-top: 2px solid #eaf0f6;
+      margin: 28px 0;
+    }
+
+    /* ===== 说明文字 ===== */
+    .note {
+      background: #eaf4fd;
+      border-left: 4px solid #2980b9;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 18px;
+      font-size: 0.88rem;
+      color: #1a6fa0;
+      margin: 14px 0;
+    }
+    .note.warn { background: #fffbf0; border-color: #f39c12; color: #7d6608; }
+
+    /* ===== 响应式 ===== */
+    @media (max-width: 768px) {
+      .cover h1 { font-size: 1.9rem; }
+      .tier-grid { grid-template-columns: 1fr 1fr; }
+      .storyline { flex-direction: column; }
+      .story-step::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -18px; transform: translateX(-50%); }
+      .logic-arrow { display: none; }
+      .model-box { flex-direction: column; }
+      .model-in  { border-radius: 10px 10px 0 0; }
+      .model-out { border-radius: 0 0 10px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== 封面 ==================== -->
+<div class="cover">
+  <div class="cover-logo">📊</div>
+  <h1>PMP考试数据分析方案</h1>
+  <p class="cover-sub">中国人才交流基金会 · PMP考试数据分析与人才库建设服务</p>
+  <div class="cover-meta">
+    <div><span>版本</span><strong>V1.0</strong></div>
+    <div><span>日期</span><strong>2026年4月</strong></div>
+    <div><span>性质</span><strong>初步方案（待字段确认后调整）</strong></div>
+  </div>
+</div>
+
+<!-- ==================== 容器 ==================== -->
+<div class="container">
+
+  <!-- ===== 核心分析逻辑框架 ===== -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-num">🔑</div>
+      <div class="section-title">核心分析逻辑框架<small>从"人才画像"到"决策支持"的完整分析链路</small></div>
+    </div>
+    <div class="logic-flow">
+      <div class="logic-step">
+        <h3>🔍 谁在考？</h3>
+        <p>人才画像<br/>Who are they?</p>
+      </div>
+      <div class="logic-arrow">→</div>
+      <div class="logic-step">
+        <h3>📈 考得怎么样？</h3>
+        <p>成绩分析<br/>How did they do?</p>
+      </div>
+      <div class="logic-arrow">→</div>
+      <div class="logic-step">
+        <h3>🔬 为什么这样？</h3>
+        <p>影响因素分析<br/>Why did this happen?</p>
+      </div>
+      <div class="logic-arrow">→</div>
+      <div class="logic-step">
+        <h3>💡 能做什么？</h3>
+        <p>决策支持<br/>What can we do?</p>
+      </div>
+    </div>
+    <div class="info-row" style="margin-top:24px;">
+      <div class="info-item"><div class="num">7</div><div class="lbl">分析模块</div></div>
+      <div class="info-item"><div class="num">4</div><div class="lbl">核心问题</div></div>
+      <div class="info-item"><div class="num">3</div><div class="lbl">领域评级</div></div>
+      <div class="info-item"><div class="num">180</div><div class="lbl">考试题数</div></div>
+    </div>
+  </div>
+
+  <!-- ===== 模块一 ===== -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-num blue">1</div>
+      <div class="section-title">模块一：人才池全貌分析（Who）<small>参加PMP认证的人才群体画像</small></div>
+    </div>
+    <div class="note">
+      📌 <strong>故事主线：</strong>参加PMP认证的人才是什么样的群体？通过描绘基本画像，为后续所有分析奠定背景基础。
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>分析方向</th>
+          <th>具体指标</th>
+          <th>价值</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🧑‍🤝‍🧑 人口结构</td>
+          <td>年龄段分布、性别比例、最高学历</td>
+          <td>描绘考生基本画像，识别主力群体</td>
+        </tr>
+        <tr>
+          <td>🏢 行业分布</td>
+          <td>来自哪些行业、企业性质（国央企/民企/外企）</td>
+          <td>了解PMP认证需求的行业结构</td>
+        </tr>
+        <tr>
+          <td>🗺️ 地域分布</td>
+          <td>省市级热力图、一/二/三线城市占比</td>
+          <td>识别人才密集区域，指导推广策略</td>
+        </tr>
+        <tr>
+          <td>🧳 经验背景</td>
+          <td>项目管理年限、35学时完成方式、备考时长</td>
+          <td>经验背景与成绩关联分析的基础</td>
+        </tr>
+        <tr>
+          <td>🎯 报考动机</td>
+          <td>晋升需求、求职转型、合规要求、个人提升</td>
+          <td>理解考生需求分层，支持差异化服务</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== 模块二 ===== -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-num green">2</div>
+      <div class="section-title">模块二：通过率全景分析（How）<small>整体通过情况与分层切片分析</small></div>
+    </div>
+
+    <div class="sub-title">2.1 宏观通过率</div>
+    <div class="info-row">
+      <div class="info-item"><div class="num" style="color:#27ae60;">整体</div><div class="lbl">总体通过率</div></div>
+      <div class="info-item"><div class="num" style="color:#2980b9;">首次</div><div class="lbl">首次通过率</div></div>
+      <div class="info-item"><div class="num" style="color:#f39c12;">重考</div><div class="lbl">重考通过率</div></div>
+      <div class="info-item"><div class="num" style="color:#8e44ad;">趋势</div><div class="lbl">各批次时间序列</div></div>
+    </div>
+    <p style="font-size:.88rem;color:#666;margin-top:8px;">与行业基准对比（全球PMP通过率约70%+），识别本批次相对表现。</p>
+
+    <hr class="divider" />
+
+    <div class="sub-title">2.2 分层通过率（核心切片）</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>切片维度</th><th>分组示例</th><th>分析价值</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🏭 按行业</td>
+          <td>IT互联网 / 建筑工程 / 制造业 / 金融 / 医疗</td>
+          <td>识别高通过率行业，分析职业相关性影响</td>
+        </tr>
+        <tr>
+          <td>🎓 按学历</td>
+          <td>专科 / 本科 / 硕士 / 博士</td>
+          <td>学历背景对成绩的实际影响</td>
+        </tr>
+        <tr>
+          <td>📅 按年龄</td>
+          <td>25-30 / 31-35 / 36-40 / 40岁以上</td>
+          <td>不同职业阶段的备考能力差异</td>
+        </tr>
+        <tr>
+          <td>⏱️ 按备考时长</td>
+          <td>1个月内 / 1-3个月 / 3-6个月 / 6个月以上</td>
+          <td>备考投入与产出的效率分析</td>
+        </tr>
+        <tr>
+          <td>🏫 按培训机构</td>
+          <td>各授权培训机构（ATP）对比</td>
+          <td>培训质量评估，支持机构管理决策</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== 模块三 ===== -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-num" style="background:#16a085;">3</div>
+      <div class="section-title">模块三：三大领域能力图谱（Core）<small>中国PMP考生的知识结构特征分析</small></div>
+    </div>
+
+    <!-- ATBN说明 -->
+    <div class="sub-title">ATBN四个等级说明</div>
+    <div class="atbn-bar">
+      <div class="atbn-item">
+        <div class="atbn-dot" style="background:#1e8449;"></div>
+        <div><h4><span class="badge badge-A">A · Above Target</span></h4><p>高于目标，深绿 — 优秀，全面扎实</p></div>
+      </div>
+      <div class="atbn-item">
+        <div class="atbn-dot" style="background:#27ae60;"></div>
+        <div><h4><span class="badge badge-T">T · Target</span></h4><p>达到目标，浅绿 — 合格，保持学习</p></div>
+      </div>
+      <div class="atbn-item">
+        <div class="atbn-dot" style="background:#f39c12;"></div>
+        <div><h4><span class="badge badge-B">B · Below Target</span></h4><p>低于目标，黄色 — 偏弱，针对补强</p></div>
+      </div>
+      <div class="atbn-item">
+        <div class="atbn-dot" style="background:#e74c3c;"></div>
+        <div><h4><span class="badge badge-N">N · Needs Improvement</span></h4><p>需显著改进，红色 — 薄弱，重点辅导</p></div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="sub-title">3.1 ATBN分布分析</div>
+    <div class="note">
+      构建"群体能力热力图"：分析三大领域（人员42% / 过程50% / 业务环境8%）中，A/T/B/N各等级考生分布占比，识别全体考生最普遍的薄弱领域。
+    </div>
+
+    <hr class="divider" />
+
+    <div class="sub-title">3.2 领域组合模式分析</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>组合类型</th><th>示例</th><th>预估占比</th><th>预估通过率</th><th>特征</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>全优型</td>
+          <td><span class="badge badge-A">A</span><span class="badge badge-A">A</span><span class="badge badge-A">A</span></td>
+          <td>?%</td>
+          <td>~100%</td>
+          <td>全面扎实，推荐进阶认证</td>
+        </tr>
+        <tr>
+          <td>均衡型</td>
+          <td><span class="badge badge-A">A</span><span class="badge badge-T">T</span><span class="badge badge-T">T</span> / <span class="badge badge-T">T</span><span class="badge badge-A">A</span><span class="badge badge-T">T</span></td>
+          <td>?%</td>
+          <td>高</td>
+          <td>稳定优质，维持现有学习节奏</td>
+        </tr>
+        <tr>
+          <td>偏科型</td>
+          <td><span class="badge badge-A">A</span><span class="badge badge-B">B</span><span class="badge badge-T">T</span> / <span class="badge badge-T">T</span><span class="badge badge-A">A</span><span class="badge badge-B">B</span></td>
+          <td>?%</td>
+          <td>中</td>
+          <td>存在明显薄弱领域，需针对性补强</td>
+        </tr>
+        <tr>
+          <td>危险型</td>
+          <td>含 <span class="badge badge-N">N</span> 的任意组合</td>
+          <td>?%</td>
+          <td>低（大概率Fail）</td>
+          <td>出现N等级，需重点辅导或重考</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr class="divider" />
+
+    <div class="sub-title">3.3 中国考生特殊性分析（假设验证）</div>
+    <div class="note warn">
+      🔑 <strong>高价值洞察：</strong>
+      假设验证——中国考生"过程"(Process)偏强（擅长记忆流程/刷题），"人员"(People)和"业务环境"(Business Environment)偏弱（软技能/战略思维不足）。<br/>
+      重点验证：沟通、冲突管理、领导力类题目是否存在系统性偏低现象？
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
+      <div style="flex:1;min-width:180px;background:#d4efdf;border-radius:8px;padding:14px 16px;">
+        <div style="font-weight:700;color:#1e8449;margin-bottom:6px;">过程 Process (50%)</div>
+        <p style="font-size:.85rem;color:#196f3d;">预期偏强：中国教育体系强调流程记忆，刷题效果好</p>
+      </div>
+      <div style="flex:1;min-width:180px;background:#fef9e7;border-radius:8px;padding:14px 16px;">
+        <div style="font-weight:700;color:#b7770d;margin-bottom:6px;">人员 People (42%)</div>
+        <p style="font-size:.85rem;color:#7d6608;">预期偏弱：软技能、情境判断题，文化背景差异明显</p>
+      </div>
+      <div style="flex:1;min-width:180px;background:#fdecea;border-radius:8px;padding:14px 16px;">
+        <div style="font-weight:700;color:#922b21;margin-bottom:6px;">业务环境 BE (8%)</div>
+        <p style="font-size:.85rem;color:#7b241c;">预期偏弱：战略合规/治理/商业价值，抽象度高</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 模块四 ===== -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-num orange">4</div>
+      <div class="section-title">模块四：知识模块得分深度分析（Deep Dive）<small>利用中方掌握的模块分数数据进行精细化分析</small></div>
+    </div>
+
+    <div class="sub-title">4.1 模块得分分布</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>指标</th><th>说明</th><th>分析价值</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>均值 / 中位数</td><td>每个模块的集中趋势</td><td>识别全体考生的平均能力水平</td></tr>
+        <tr><td>标准差</td><td>每个模块的离散程度</td><td>差异大的模块说明考生分化明显</td></tr>
+        <tr><td>得分分布形态</td><td>正态分布 / 左偏 / 右偏</td><td>判断模块难度特征</td></tr>
+        <tr><td>高低分考生特征</td><td>高分区间 vs 低分区间的背景对比</td><td>识别高分群体共同特征</td></tr>
+      </tbody>
+    </table>
+
+    <hr class="divider" />
+
+    <div class="sub-title">4.2 关键模块识别——四象限模块地图</div>
+    <div class="note">
+      难度指数 = 1 − 该模块平均正确率 &nbsp;|&nbsp; 区分度 = 高分组正确率 − 低分组正确率（Item Analysis经典方法）
+    </div>
+    <div class="quadrant-wrap">
+      <div class="quadrant q-tl">
+        <div class="q-label">⚠️ 重点关注</div>
+        <div class="q-desc">难度高 + 区分度高<br/>决定通过与否的关键模块<br/>需重点备考</div>
+      </div>
+      <div class="quadrant q-tr">
+        <div class="q-label">✅ 核心必考</div>
+        <div class="q-desc">难度低 + 区分度高<br/>基础分，必须拿满<br/>高通过率保障</div>
+      </div>
+      <div class="quadrant q-bl">
+        <div class="q-label">🔻 效率存疑</div>
+        <div class="q-desc">难度高 + 区分度低<br/>大家都难，投入产出低<br/>可择优备考</div>
+      </div>
+      <div class="quadrant q-br">
+        <div class="q-label">📚 基础巩固</div>
+        <div class="q-desc">难度低 + 区分度低<br/>基础知识，稳定得分<br/>保持不失分</div>
+      </div>
+    </div>
+    <div class="quadrant-axis">
+      <span>← 题目越难（难度指数高）</span>
+      <span style="color:#27ae60;font-weight:700;">↑ 区分度高（能区分高低分）</span>
+      <span>题目越易（难度指数低）→</span>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="sub-title">4.3 模块间相关性分析</div>
+    <p style="font-size:.9rem;color:#555;">
+      通过相关矩阵与聚类分析，识别"能力组合类型"：哪些模块高度正相关（属于同一能力簇）？
+      不同能力簇的考生群体特征有何不同？
+    </p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+      <span class="tag tag-blue">📊 相关矩阵热力图</span>
+      <span class="tag tag-green">🔗 聚类分析（K-Means/层次聚类）</span>
+      <span class="tag tag-orange">👥 考生能力类型分群</span>
+    </div>
+  </div>
+
+  <!-- ===== 模块五 ===== -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-num red">5</div>
+      <div class="section-title">模块五：影响因素分析（Why）<small>什么因素最能预测PMP通过？</small></div>
+    </div>
+
+    <div class="sub-title">5.1 单因素分析</div>
+    <div class="note">对各背景变量与通过率进行统计检验（卡方检验 / T检验 / ANOVA），识别哪些变量对通过率有显著影响。</div>
+
+    <hr class="divider" />
+
+    <div class="sub-title">5.2 多因素回归模型</div>
+    <div class="model-box">
+      <div class="model-block model-in">
+        <h4>📥 输入变量</h4>
+        <ul>
+          <li>行业经验年限</li>
+          <li>备考时长</li>
+          <li>培训方式</li>
+          <li>学历背景</li>
+          <li>考前模拟题得分</li>
+          <li>年龄段</li>
+        </ul>
+      </div>
+      <div class="model-arrow-v">→</div>
+      <div class="model-block model-mid">
+        <h4>⚙️ 模型</h4>
+        <ul>
+          <li>逻辑回归</li>
+          <li>随机森林</li>
+          <li>特征重要性排序</li>
+        </ul>
+      </div>
+      <div class="model-arrow-v">→</div>
+      <div class="model-block model-out">
+        <h4>📤 目标变量</h4>
+        <ul>
+          <li>PASS / FAIL</li>
+          <li>各因素影响权重</li>
+          <li>通过概率预测</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="sub-title">5.3 知识模块贡献度</div>
+    <p style="font-size:.9rem;color:#555;">
+      通过特征重要性分析，识别对最终PASS/FAIL影响最大的5个关键知识模块，
+      为培训课程设计提供数据驱动的依据。
+    </p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+      <span class="tag tag-blue">TOP 5 关键模块</span>
+      <span class="tag tag-green">ROI最高的备考方向</span>
+      <span class="tag tag-orange">培训课程优化建议</span>
+    </div>
+  </div>
+
+  <!-- ===== 模块六 ===== -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-num teal">6</div>
+      <div class="section-title">模块六：人才库建设与标签体系（Value）<small>将考试数据转化为可用的人才资产</small></div>
+    </div>
+
+    <div class="sub-title">6.1 考生能力标签画像</div>
+    <div class="note">每位考生自动生成多维能力标签，构建可检索、可筛选的人才数据库。</div>
+    <table class="data-table" style="margin-top:12px;">
+      <thead><tr><th>标签类别</th><th>标签示例</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>领域能力</td>
+          <td>
+            <span class="badge badge-A">过程管理-A</span>&nbsp;
+            <span class="badge badge-T">人员管理-T</span>&nbsp;
+            <span class="badge badge-B">业务环境-B</span>
+          </td>
+        </tr>
+        <tr>
+          <td>行业背景</td>
+          <td>
+            <span class="tag tag-blue">IT互联网</span>
+            <span class="tag tag-blue">建筑工程</span>
+            <span class="tag tag-blue">金融</span>
+          </td>
+        </tr>
+        <tr>
+          <td>经验层级</td>
+          <td>
+            <span class="tag tag-green">5年以上经验</span>
+            <span class="tag tag-green">PMP持证人</span>
+          </td>
+        </tr>
+        <tr>
+          <td>能力短板</td>
+          <td>
+            <span class="tag tag-orange">⚠️ 人员管理待提升</span>
+            <span class="tag tag-red">🔴 业务战略薄弱</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr class="divider" />
+
+    <div class="sub-title">6.2 人才分层模型（S/A/B/C级）</div>
+    <div class="tier-grid">
+      <div class="tier-card tier-s">
+        <div class="tier-rank">S</div>
+        <h4>高潜人才</h4>
+        <p>3A全优<br/>推荐进阶认证<br/>（PgMP/ACP等）</p>
+      </div>
+      <div class="tier-card tier-a">
+        <div class="tier-rank">A</div>
+        <h4>优质人才</h4>
+        <p>含T，无B/N<br/>维持学习节奏<br/>积累PDU</p>
+      </div>
+      <div class="tier-card tier-b">
+        <div class="tier-rank">B</div>
+        <h4>培养人才</h4>
+        <p>含B，无N<br/>针对性补强<br/>精准培训</p>
+      </div>
+      <div class="tier-card tier-c">
+        <div class="tier-rank">C</div>
+        <h4>基础人才</h4>
+        <p>含N<br/>重点辅导<br/>备战重考</p>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="sub-title">6.3 行业人才地图</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
+      <div style="flex:1;min-width:200px;background:#f0f6ff;border-radius:8px;padding:16px;">
+        <div style="font-weight:700;margin-bottom:6px;color:#1a3a5c;">🗺️ 区域人才分布</div>
+        <p style="font-size:.85rem;color:#555;">特定行业PMP持证人的地域分布，识别人才密集区与空白区</p>
+      </div>
+      <div style="flex:1;min-width:200px;background:#f0fdf5;border-radius:8px;padding:16px;">
+        <div style="font-weight:700;margin-bottom:6px;color:#1e8449;">🏢 企业人才盘点</div>
+        <p style="font-size:.85rem;color:#555;">企业级人才分布与能力结构分析（如有企业维度数据）</p>
+      </div>
+      <div style="flex:1;min-width:200px;background:#fffbf0;border-radius:8px;padding:16px;">
+        <div style="font-weight:700;margin-bottom:6px;color:#b7770d;">📍 供需匹配分析</div>
+        <p style="font-size:.85rem;color:#555;">区域人才供给与市场需求的匹配度，支持政策制定</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 模块七 ===== -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-num purple">7</div>
+      <div class="section-title">模块七：趋势与预测分析（Future）<small>时间序列分析与智能预测模型</small></div>
+    </div>
+
+    <div class="sub-title">7.1 时间序列分析</div>
+    <table class="data-table">
+      <thead><tr><th>分析指标</th><th>分析内容</th><th>洞察价值</th></tr></thead>
+      <tbody>
+        <tr><td>通过率趋势</td><td>各年度/季度通过率走势图</td><td>判断整体难度变化，预警异常批次</td></tr>
+        <tr><td>能力均值趋势</td><td>三大领域ATBN等级分布年度变化</td><td>验证考生整体能力是否在逐年提升</td></tr>
+        <tr><td>人才增长趋势</td><td>新增PMP持证人数量增长曲线</td><td>预测未来人才供给规模</td></tr>
+        <tr><td>结构变化趋势</td><td>行业/地域分布的年度演变</td><td>识别新兴需求领域和地区</td></tr>
+      </tbody>
+    </table>
+
+    <hr class="divider" />
+
+    <div class="sub-title">7.2 预测模型</div>
+    <div class="note">
+      🤖 <strong>考前通过概率预测：</strong>
+      根据考前模拟题成绩、备考时长、背景特征，预测考生正式考试通过概率，
+      辅助考生判断"是否已准备好"，提高首次通过率。
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+      <span class="tag tag-blue">📈 ARIMA时间序列预测</span>
+      <span class="tag tag-green">🤖 通过概率预测模型</span>
+      <span class="tag tag-orange">📅 未来人才规模预测</span>
+    </div>
+  </div>
+
+  <!-- ===== 故事线 ===== -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-num" style="background:#2980b9;">★</div>
+      <div class="section-title">最终故事线（Story Arc）<small>七章递进，从画像到未来的完整叙事</small></div>
+    </div>
+    <div class="storyline">
+      <div class="story-step">
+        <div class="story-icon">👥</div>
+        <div class="story-ch">第一章</div>
+        <div class="story-title">他们是谁？</div>
+        <div class="story-desc">人才画像<br/>Who</div>
+      </div>
+      <div class="story-step">
+        <div class="story-icon">📊</div>
+        <div class="story-ch">第二章</div>
+        <div class="story-title">考得怎样？</div>
+        <div class="story-desc">通过率全景<br/>How</div>
+      </div>
+      <div class="story-step">
+        <div class="story-icon">🗺️</div>
+        <div class="story-ch">第三章</div>
+        <div class="story-title">强弱在哪？</div>
+        <div class="story-desc">能力图谱<br/>Core</div>
+      </div>
+      <div class="story-step">
+        <div class="story-icon">🔬</div>
+        <div class="story-ch">第四章</div>
+        <div class="story-title">深度挖掘</div>
+        <div class="story-desc">模块分析<br/>Deep Dive</div>
+      </div>
+      <div class="story-step">
+        <div class="story-icon">💡</div>
+        <div class="story-ch">第五章</div>
+        <div class="story-title">为什么？</div>
+        <div class="story-desc">影响因素<br/>Why</div>
+      </div>
+      <div class="story-step">
+        <div class="story-icon">🏆</div>
+        <div class="story-ch">第六章</div>
+        <div class="story-title">人才价值</div>
+        <div class="story-desc">人才库建设<br/>Value</div>
+      </div>
+      <div class="story-step">
+        <div class="story-icon">🔮</div>
+        <div class="story-ch">第七章</div>
+        <div class="story-title">未来走向</div>
+        <div class="story-desc">趋势预测<br/>Future</div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:24px;">
+      📖 <strong>叙事逻辑：</strong>
+      从"认识这群人"出发，揭示"他们的表现"，定位"知识结构短板"，找到"影响成败的根本因素"，
+      最终将数据资产转化为"可用的人才库"，并展望"未来发展趋势"。每一章都为下一章提供依据，
+      形成完整的数据故事。
+    </div>
+  </div>
+
+  <!-- ===== 下一步调整建议 ===== -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-num" style="background:#7f8c8d;">✓</div>
+      <div class="section-title">下一步调整建议<small>获取实际字段后的5个关键确认事项</small></div>
+    </div>
+    <ul class="checklist">
+      <li>
+        <div class="chk-box"></div>
+        <div class="chk-text">
+          <strong>① 个人背景字段确认</strong>
+          <span>是否涵盖行业、学历、年龄、备考时长等信息？字段完整程度决定"模块一/五"的分析深度。</span>
+        </div>
+      </li>
+      <li>
+        <div class="chk-box"></div>
+        <div class="chk-text">
+          <strong>② 知识模块分数粒度确认</strong>
+          <span>中方掌握的模块分数，粒度细化到Task级（子任务）还是Domain级（三大领域）？影响"模块四"的可行性。</span>
+        </div>
+      </li>
+      <li>
+        <div class="chk-box"></div>
+        <div class="chk-text">
+          <strong>③ 时间维度确认</strong>
+          <span>是否有多批次（多期）历史数据支持趋势分析？否则"模块七"将仅做截面分析，不做预测。</span>
+        </div>
+      </li>
+      <li>
+        <div class="chk-box"></div>
+        <div class="chk-text">
+          <strong>④ 企业维度数据确认</strong>
+          <span>考生数据是否能关联到具体企业？若可以，则可支持企业级人才盘点和B端服务产品设计。</span>
+        </div>
+      </li>
+      <li>
+        <div class="chk-box"></div>
+        <div class="chk-text">
+          <strong>⑤ 重考数据追踪确认</strong>
+          <span>同一考生的多次考试记录是否可追踪？支持"重考提升分析"和备考建议的个性化优化。</span>
+        </div>
+      </li>
+    </ul>
+    <div class="note warn" style="margin-top:16px;">
+      ⚡ 根据实际字段的丰富程度，决定哪些模块<strong>做深</strong>（Full Analysis），哪些模块<strong>简化处理</strong>（Summary Only），
+      在有限资源下最大化数据洞察价值。
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ===== 页脚 ===== -->
+<div style="background:#1a3a5c;color:#fff;text-align:center;padding:28px 24px;font-size:.85rem;opacity:.92;">
+  <div style="margin-bottom:6px;font-weight:700;letter-spacing:.05em;">PMP考试数据分析方案 · 中国人才交流基金会</div>
+  <div style="opacity:.7;">本方案为初步框架，待实际数据字段确认后进行针对性调整 &nbsp;|&nbsp; V1.0 · 2026年4月</div>
+</div>
+
+</body>
+</html>
